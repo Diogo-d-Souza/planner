@@ -16,27 +16,40 @@ class Login {
     this.user = null;
   }
 
+  async signin() {
+    this.validate();
+    if (this.errors.length > 0) return
+    this.user = await LoginModel.findOne({ email: this.body.email });
+
+    if(!this.user) {
+      this.errors.push('User does not exist');
+      return;
+    }
+
+    if (!bcryptjs.compareSync(this.body.password, this.user.password)) {
+      this.errors.push('Invalid password');
+      this.user = null;
+      return;
+    }
+
+  }
+
   async register() {
     this.validate();
     if (this.errors.length > 0) return
-    
+
     await this.userExists();
-    
+
     if (this.errors.length > 0) return
-    
+
     const salt = bcryptjs.genSaltSync()
     this.body.password = bcryptjs.hashSync(this.body.password, salt);
-
-    try {
-      this.user = await LoginModel.create(this.body);
-    } catch (error) {
-      console.log(error);
-    }
+    this.user = await LoginModel.create(this.body);
   }
 
   async userExists() {
-    const user = await LoginModel.findOne({ email: this.body.email });
-    if (user) this.errors.push('User already exists');
+    this.user = await LoginModel.findOne({ email: this.body.email });
+    if (this.user) this.errors.push('User already exists');
   }
 
   validate() {
