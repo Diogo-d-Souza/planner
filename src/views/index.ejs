@@ -10,16 +10,24 @@
 
     <%- include('includes/messages') %>
 
+    <% if (contacts.length > 0) { %>
     <div class="responsive-table">
       <table class="table my-3">
-        <tr>
-          <td>Diogo</td>
-          <td>99999999</td>
-          <td>CPF</td>
-          <td>EMAIL</td>
-        </tr>
+        <% contacts.forEach(contact => { %>
+          <tr>
+            <td><%= contact.name %></td>
+            <td><%= contact.lastname %></td>
+            <td><%= contact.phone %></td>
+            <td><%= contact.email %></td>
+            <td><a href="/contact/<%= contact._id%>">Edit</a></td>
+            <td><a class="text-danger" href="/contact/delete/<%= contact._id%>">Delete</a></td>
+          </tr>
+        <% }) %>
       </table>
     </div>
+    <% } else {%>
+      <p class="text-center lead">There are no contacts in your planner.</p>
+      <% } %>
 
     <div class="col-lg-2"></div>
   </div>
