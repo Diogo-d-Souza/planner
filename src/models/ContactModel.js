@@ -7,7 +7,7 @@ const ContactSchema = new mongoose.Schema({
   email: { type: String, required: false, default: '' },
   phone: { type: String, required: false, default: '' },
   createdAt: { type: Date, default: Date.now },
-  
+
 });
 
 const ContactModel = mongoose.model('Contact', ContactSchema);
@@ -23,6 +23,13 @@ class Contact {
     if (typeof id !== 'string') return;
     const user = await ContactModel.findById(id);
     return user;
+  }
+
+  async edit(id) {
+    if (typeof id !== 'string') return;
+    this.validate();
+    if (this.errors.length > 0) return;
+    this.contact = await ContactModel.findByIdAndUpdate(id, this.body, { new: true });
   }
 
   async register() {
